@@ -14,6 +14,11 @@ body {
     background: linear-gradient(to right, #2980b9, #6dd5fa, #ffffff);
 }
 
+*::-webkit-scrollbar {
+    width: 0;  /* Remove scrollbar space */
+    background: transparent;  /* Optional: just make scrollbar invisible */
+}
+
 .visualisation_container {
     width: 90%;
     height: 80%;

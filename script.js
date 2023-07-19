@@ -18,6 +18,9 @@ d3.selectAll(".expand-button").on("click", function (d) {
             }
         });
     }
+    setTimeout(() => {
+        drawPaths();
+    }, 500);
 
 });
 
@@ -30,6 +33,8 @@ function drawPaths() {
         nodeX, nodeY;
     let sourceX, sourceY, sourceWidth, sourceHeight, sourceIndex;
     let targetX, targetY, targetWidth, targetHeight, targetIndex;
+
+    console.log(document.querySelector(".visualisation_container").getBoundingClientRect());
 
     d3.select("svg").attr("height", document.querySelector(".visualisation_container").getBoundingClientRect().height)
         .attr("width", document.querySelector(".visualisation_container").getBoundingClientRect().width)
@@ -45,7 +50,6 @@ function drawPaths() {
     }
     document.querySelectorAll(".link-source").forEach(element => {
         if (element.getAttribute("class").split(" ")[1].split("")[0] == 0) {
-            console.log("source");
             sourceX = element.getBoundingClientRect().x - visualContainerX;
             sourceY = element.getBoundingClientRect().y - visualContainerY;
             sourceWidth = element.getBoundingClientRect().width;
