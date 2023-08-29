@@ -8,116 +8,6 @@ export class VisualisationService {
 
   constructor() { }
 
-  generateTree(selector: string) {
-    const treeData = {
-      "name": "Eve",
-      "value": 15,
-      "type": "black",
-      "level": "yellow",
-      "children": [
-        {
-          "name": "Cain",
-          "value": 10,
-          "type": "grey",
-          "level": "red"
-        },
-        {
-          "name": "Seth",
-          "value": 10,
-          "type": "grey",
-          "level": "red",
-          "children": [
-            {
-              "name": "Enos",
-              "value": 7.5,
-              "type": "grey",
-              "level": "purple"
-            },
-            {
-              "name": "Noam",
-              "value": 7.5,
-              "type": "grey",
-              "level": "purple"
-            }
-          ]
-        },
-        {
-          "name": "Abel",
-          "value": 10,
-          "type": "grey",
-          "level": "blue"
-        },
-        {
-          "name": "Awan",
-          "value": 10,
-          "type": "grey",
-          "level": "green",
-          "children": [
-            {
-              "name": "Enoch",
-              "value": 7.5,
-              "type": "grey",
-              "level": "orange"
-            }
-          ]
-        },
-        {
-          "name": "Azura",
-          "value": 10,
-          "type": "grey",
-          "level": "green"
-        }
-      ]
-    };
-
-    let conatinerWidth: number = document.querySelector(selector)!.getBoundingClientRect().width,
-      containerHeight: number = document.querySelector(selector)!.getBoundingClientRect().height;
-
-    let svg = d3.select(selector).append("svg")
-      .attr("height", containerHeight)
-      .attr("width", conatinerWidth);
-
-    let g = svg.append("g");
-
-    const treemap = d3.tree().size([containerHeight, conatinerWidth]);
-    let nodes: d3.HierarchyNode<unknown | any> = d3.hierarchy(treeData, (d: any) => d.children);
-    nodes = treemap(nodes);
-
-    console.log(nodes);
-
-    const node = g.selectAll(".node")
-      .data(nodes.descendants())
-      .enter().append("g")
-      .attr("class", (d: any) => "node" + (d.children ? " node--internal" : " node--leaf"))
-      .attr("transform", (d: any) => "translate(" + d.y + "," + d.x + ")");
-
-    const link = g.selectAll(".link")
-      .data(nodes.descendants().slice(1))
-      .enter().append("path")
-      .attr("class", "link")
-      .style("stroke", d => d.data.level)
-      .attr("d", (d: any) => {
-        return "M" + d.y + "," + d.x
-          + "C" + (d.y + d.parent.y) / 2 + "," + d.x
-          + " " + (d.y + d.parent.y) / 2 + "," + d.parent.x
-          + " " + d.parent.y + "," + d.parent.x;
-      });
-
-    node.append("circle")
-      .attr("r", d => d.data.value)
-      .style("stroke", d => d.data.type)
-      .style("fill", d => d.data.level);
-
-    node.append("text")
-      .attr("dy", ".35em")
-      .attr("x", d => d.children ? (d.data.value + 5) * -1 : d.data.value + 5)
-      .attr("y", (d: any) => d.children && d.depth !== 0 ? -(d.data.value + 5) : d)
-      .style("text-anchor", d => d.children ? "end" : "start")
-      .style("fill", "white")
-      .text(d => d.data.name);
-
-  }
-
   generateExpandableTree(selector: string) {
     const nodedata = [
       {
@@ -320,8 +210,8 @@ export class VisualisationService {
         .attr("markerHeight", 5)
         .attr("orient", "auto")
         .append("svg:path")
-          .attr("d", "M0,-5L10,0L0,5")
-          .attr("fill", "white");
+        .attr("d", "M0,-5L10,0L0,5")
+        .attr("fill", "white");
 
       link.attr("marker-end", "url(#arrow)")
     }
