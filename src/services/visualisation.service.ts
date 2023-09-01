@@ -8,7 +8,7 @@ export class VisualisationService {
 
   constructor() { }
 
-  generateExpandableTree(selector: string) {
+  generateExpandableTree(selector: string, showLinkText: boolean = true) {
     const nodedata = [
       {
         "id": "pds-cbs",
@@ -19,7 +19,7 @@ export class VisualisationService {
           {
             "id": "pds-cbs-ad",
             "name": "Account Documents",
-            "Description": "Lorem Ipsum"
+            "Description": "Lorem Ipsum I'm trying to pass a value to a d3 click event bind to a group composed of a circle and a letter. However this value remains 'undefined' in the callback function. On the other hand if I pass the same value to another function of the same group, such as .text(d => d.value) that works fine. The issue is only with the click event. Please find my piece of code:"
           },
           {
             "id": "pds-cbs-ar",
@@ -143,6 +143,8 @@ export class VisualisationService {
       e.parentElement.removeChild(e);
     })
 
+
+
     let conatinerWidth: number = document.querySelector(selector)!.getBoundingClientRect().width,
       containerHeight: number = document.querySelector(selector)!.getBoundingClientRect().height;
 
@@ -169,30 +171,53 @@ export class VisualisationService {
         .attr("height", "40")
         .attr("width", "40")
         .attr("x", (nodedata[i]["level"][0] * 600))
-        .attr("y", (nodedata[i]["level"][1] * 400))
+        .attr("y", () => {
+          let yPosition;
+          if (i == 0) {
+            yPosition = 0;
+          } else {
+            let n = document.querySelector(`#${nodedata[i - 1]["id"]}`)?.getBoundingClientRect()
+            yPosition = ((n!.y + n!.height + 100) * nodedata[i]["level"][1]);
+          }
+
+          return yPosition;
+        })
         .style("overflow", "visible")
         .html(() => {
           let nodeHTML = `
-          <div class="node-container">
+          <div class="node-container" id="${nodedata[i]["id"]}">
           <div class="node-title"><span>${nodedata[i]["title"]}</span></div>
           <div class="node-body">
               <div class="node-name"><span>${nodedata[i]["name"]}</span></div>
               <div class="sub-node-container">`
 
           for (let j = 0; j < nodedata[i]["sub-node"].length; j++) {
-            nodeHTML += `<div class="sub-node"><div class="sub-node-name" id="${nodedata[i]["sub-node"][j]["id"]}">${nodedata[i]["sub-node"][j]["name"]}</div></div>`
+            nodeHTML += `<div class="sub-node">
+              <div class="sub-node-name" id="${nodedata[i]["sub-node"][j]["id"]}">${nodedata[i]["sub-node"][j]["name"]}</div>
+              <div class="sub-node-desc sub-node-desc-hidden" id="${nodedata[i]["sub-node"][j]["id"]}-desc">${nodedata[i]["sub-node"][j]["Description"]}</div>
+            </div>`
           }
           nodeHTML += `</div></div></div>`
           return nodeHTML;
         })
     }
 
+
+    d3.selectAll(".sub-node").on("click", (event) => {
+      console.log(event);
+      document.querySelectorAll(".sub-node-desc").forEach(e=>{
+        e!.classList.add("sub-node-desc-hidden");
+      })
+      document.querySelector(`#${event.target.id}-desc`)!.classList.remove("sub-node-desc-hidden");
+    })
+
     for (let i = 0; i < linkData.length; i++) {
       console.log(linkData[i]);
       let source = document.querySelector(`#${linkData[i]["source"]}`)?.parentElement!.getBoundingClientRect();
       let target = document.querySelector(`#${linkData[i]["target"]}`)?.parentElement!.getBoundingClientRect();
       console.log(source, target);
-      let link = g.append("path")
+      let linkContainer = g.append('g')
+      let link = linkContainer.append("path")
         .attr("stroke", "white")
         .attr("stroke-width", "2px")
         .attr("fill", "none")
@@ -214,6 +239,21 @@ export class VisualisationService {
         .attr("fill", "white");
 
       link.attr("marker-end", "url(#arrow)")
+      if (showLinkText) {
+        let linkText = linkContainer.append("text")
+          .attr("fill", "white")
+          .attr("x", () => {
+            return (target!.x - ((target!.x - source!.x) / 2)) + 10;
+          })
+          .style("clip-path", 'url(#rect)')
+          .style("stroke", "none")
+          .attr("y", () => {
+            return target!.y - 15;
+          })
+          .text(() => {
+            return "Hello World";
+          })
+      }
     }
 
 
