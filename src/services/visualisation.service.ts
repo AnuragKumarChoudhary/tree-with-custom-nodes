@@ -136,6 +136,10 @@ export class VisualisationService {
       {
         "source": "ldm-a-a",
         "target": "du-if-d2"
+      },
+      {
+        "source": "pds-cbs-ar",
+        "target": "ldm-a-a"
       }
     ]
 
@@ -225,14 +229,25 @@ export class VisualisationService {
         console.log(linkData[i]);
         let source = document.querySelector(`#${linkData[i]["source"]}`)?.parentElement!.getBoundingClientRect();
         let target = document.querySelector(`#${linkData[i]["target"]}`)?.parentElement!.getBoundingClientRect();
-        let offsetX = 0;
-        let offsetY = 0;
-        console.log(document.querySelector("g.graph")?.getAttribute("transform")?.toString().split(" ")[0].split("(")[1].split(")")[0].split(","));
-        if (document.querySelector("g.graph")?.getAttribute("transform")) {
-          offsetX = parseInt(document.querySelector("g.graph")!.getAttribute("transform")!.toString().split(" ")[0].split("(")[1].split(")")[0].split(",")[0])
-          offsetY = parseInt(document.querySelector("g.graph")!.getAttribute("transform")!.toString().split(" ")[0].split("(")[1].split(")")[0].split(",")[1])
+        let graph = document.querySelector(`g.graph`)?.getBoundingClientRect();
+        let relSrcX = (source!.x - document.querySelector(`g.graph`)!.getBoundingClientRect()!.x);
+        let relSrcY = (source!.y - document.querySelector(`g.graph`)!.getBoundingClientRect()!.y);
+        let relTarX = (target!.x - document.querySelector(`g.graph`)!.getBoundingClientRect()!.x);
+        let relTarY = (target!.y - document.querySelector(`g.graph`)!.getBoundingClientRect()!.y);
+        let relSrcWidth = source!.width;
+
+        if (document.querySelector("g.graph")!.getAttribute("transform")) {
+          console.log(100 / parseFloat(document.querySelector("g.graph")!.getAttribute("transform")!.toString().split(" ")[1].split("(")[1].split(")")[0]));
+          relSrcX = relSrcX * (1 / parseFloat(document.querySelector("g.graph")!.getAttribute("transform")!.toString().split(" ")[1].split("(")[1].split(")")[0]))
+          relSrcY = relSrcY * (1 / parseFloat(document.querySelector("g.graph")!.getAttribute("transform")!.toString().split(" ")[1].split("(")[1].split(")")[0]))
+          relTarX = relTarX * (1 / parseFloat(document.querySelector("g.graph")!.getAttribute("transform")!.toString().split(" ")[1].split("(")[1].split(")")[0]))
+          relTarY = relTarY * (1 / parseFloat(document.querySelector("g.graph")!.getAttribute("transform")!.toString().split(" ")[1].split("(")[1].split(")")[0]))
+          relSrcWidth = relSrcWidth * (1 / parseFloat(document.querySelector("g.graph")!.getAttribute("transform")!.toString().split(" ")[1].split("(")[1].split(")")[0]))
         }
-        console.log(source, target);
+
+        console.log(graph, source, target);
+        console.log(relSrcX, relSrcY, relTarX, relTarY);
+
         let linkContainer = g.append('g').attr("class", "link-container")
         let link = linkContainer.append("path")
           .attr("stroke", "white")
@@ -240,7 +255,7 @@ export class VisualisationService {
           .attr("fill", "none")
           .attr("d", () => {
             // let path = `M ${paths.sources[i].x + paths.sources[i].width} ${paths.sources[i].y + (paths.sources[i].height / 2)} L${paths.sources[i].x + paths.sources[i].width + 50 - (paths.sources[i].index * 10)} ${paths.sources[i].y + (paths.sources[i].height / 2)} V${paths.sources[i].y + (paths.sources[i].height / 2)} ${paths.targets[i].y + (paths.targets[i].height / 2)} L${paths.targets[i].x - 300} ${paths.targets[i].y + (paths.targets[i].height / 2)}`;
-            let path = `M ${source!.x + source!.width - offsetX - 30} ${source!.y - offsetY - 10} L${(target!.x - offsetX) - ((target!.x - source!.x) / 2)} ${source!.y - offsetY - 10} V${source!.y - offsetY - 10} ${target!.y - offsetY - 10} L${target!.x - offsetX - 30} ${target!.y - offsetY - 10}`;
+            let path = `M ${relSrcX + relSrcWidth + 20} ${relSrcY + 40} L${((relTarX + (relSrcX + relSrcWidth)) / 2)} ${relSrcY + 40} V${relSrcY + 40} ${relTarY + 40} L${relTarX + 20} ${relTarY + 40}`;
             console.log(path);
             return path;
           })
@@ -260,17 +275,18 @@ export class VisualisationService {
           let linkText = linkContainer.append("text")
             .attr("fill", "white")
             .attr("x", () => {
-              return ((target!.x - offsetX) - ((target!.x - source!.x) / 2)) + 10;
+              return ((relTarX + (relSrcX + relSrcWidth)) / 2) + 5;
             })
             .style("clip-path", 'url(#rect)')
             .style("stroke", "none")
             .attr("y", () => {
-              return target!.y - offsetY - 15;
+              return relTarY + 30;
             })
             .text(() => {
               return "Hello World";
             })
         }
+        // break;
       }
     }
 
