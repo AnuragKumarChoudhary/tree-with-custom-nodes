@@ -225,7 +225,11 @@ export class VisualisationService {
       document.querySelectorAll(".link-container").forEach((e: any) => {
         e.parentElement.removeChild(e);
       })
+
       for (let i = 0; i < linkData.length; i++) {
+        console.log(`${linkData[i]["source"].split("-")[0]}-${linkData[i]["source"].split("-")[1]}`)
+        console.log(nodedata.filter(item => item.id.toLowerCase().includes(`${linkData[i]["source"].split("-")[0]}-${linkData[i]["source"].split("-")[1]}`))[0].level[1]);
+        let linkOffset = (nodedata.filter(item => item.id.toLowerCase().includes(`${linkData[i]["source"].split("-")[0]}-${linkData[i]["source"].split("-")[1]}`))[0].level[1]) * 10;
         console.log(linkData[i]);
         let source = document.querySelector(`#${linkData[i]["source"]}`)?.parentElement!.getBoundingClientRect();
         let target = document.querySelector(`#${linkData[i]["target"]}`)?.parentElement!.getBoundingClientRect();
@@ -255,7 +259,7 @@ export class VisualisationService {
           .attr("fill", "none")
           .attr("d", () => {
             // let path = `M ${paths.sources[i].x + paths.sources[i].width} ${paths.sources[i].y + (paths.sources[i].height / 2)} L${paths.sources[i].x + paths.sources[i].width + 50 - (paths.sources[i].index * 10)} ${paths.sources[i].y + (paths.sources[i].height / 2)} V${paths.sources[i].y + (paths.sources[i].height / 2)} ${paths.targets[i].y + (paths.targets[i].height / 2)} L${paths.targets[i].x - 300} ${paths.targets[i].y + (paths.targets[i].height / 2)}`;
-            let path = `M ${relSrcX + relSrcWidth + 20} ${relSrcY + 40} L${((relTarX + (relSrcX + relSrcWidth)) / 2)} ${relSrcY + 40} V${relSrcY + 40} ${relTarY + 40} L${relTarX + 20} ${relTarY + 40}`;
+            let path = `M ${relSrcX + relSrcWidth + 20} ${relSrcY + 40} L${((relTarX + (relSrcX + relSrcWidth)) / 2) - 90 + linkOffset} ${relSrcY + 40} V${relSrcY + 40} ${relTarY + 40} L${relTarX + 20} ${relTarY + 40}`;
             console.log(path);
             return path;
           })
