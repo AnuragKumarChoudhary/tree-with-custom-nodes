@@ -29,6 +29,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    font-weight: 900;
 }
 
 .node-body {
@@ -46,6 +47,7 @@ body {
     align-items: center;
     justify-content: flex-start;
     margin: 0px 10px;
+    font-weight: 700;
 }
 
 .sub-node-container {
@@ -78,6 +80,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    font-weight: 500;
 }
 
 .sub-node-desc{
@@ -87,6 +90,7 @@ body {
     transition: all 500ms ease-in-out;
     text-align: justify;
     border-top: 1px solid rgba(5, 5, 5, 0.5);
+    font-size: 12px;
 }
 
 .sub-node-desc-hidden{

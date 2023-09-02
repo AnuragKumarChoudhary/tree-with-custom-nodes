@@ -154,7 +154,7 @@ export class VisualisationService {
 
     let g = svg.append("g").attr("class", "graph");
 
-    let zoom = d3.zoom().on("zoom", handleZoom)
+    let zoom = d3.zoom().on("zoom", handleZoom).scaleExtent([0.4, 1])
 
     function handleZoom(e: any) {
       d3.select("g.graph").attr("transform", e.transform)
@@ -205,54 +205,72 @@ export class VisualisationService {
 
     d3.selectAll(".sub-node").on("click", (event) => {
       console.log(event);
-      document.querySelectorAll(".sub-node-desc").forEach(e=>{
-        e!.classList.add("sub-node-desc-hidden");
+      document.querySelectorAll(".sub-node-desc").forEach(e => {
+        console.log(e.id, event.target.id + "-desc");
+        if (e.id != event.target.id + "-desc") {
+          e!.classList.add("sub-node-desc-hidden");
+        }
       })
-      document.querySelector(`#${event.target.id}-desc`)!.classList.remove("sub-node-desc-hidden");
+      document.querySelector(`#${event.target.id}-desc`)!.classList.toggle("sub-node-desc-hidden");
+      createLink();
     })
 
-    for (let i = 0; i < linkData.length; i++) {
-      console.log(linkData[i]);
-      let source = document.querySelector(`#${linkData[i]["source"]}`)?.parentElement!.getBoundingClientRect();
-      let target = document.querySelector(`#${linkData[i]["target"]}`)?.parentElement!.getBoundingClientRect();
-      console.log(source, target);
-      let linkContainer = g.append('g')
-      let link = linkContainer.append("path")
-        .attr("stroke", "white")
-        .attr("stroke-width", "2px")
-        .attr("fill", "none")
-        .attr("d", () => {
-          // let path = `M ${paths.sources[i].x + paths.sources[i].width} ${paths.sources[i].y + (paths.sources[i].height / 2)} L${paths.sources[i].x + paths.sources[i].width + 50 - (paths.sources[i].index * 10)} ${paths.sources[i].y + (paths.sources[i].height / 2)} V${paths.sources[i].y + (paths.sources[i].height / 2)} ${paths.targets[i].y + (paths.targets[i].height / 2)} L${paths.targets[i].x - 300} ${paths.targets[i].y + (paths.targets[i].height / 2)}`;
-          let path = `M ${source!.x + source!.width - 30} ${source!.y - 10} L${target!.x - ((target!.x - source!.x) / 2)} ${source!.y - 10} V${source!.y - 10} ${target!.y - 10} L${target!.x - 30} ${target!.y - 10}`;
-          console.log(path);
-          return path;
-        })
-      svg.append("svg:defs").append("svg:marker")
-        .attr("id", "arrow")
-        .attr("viewBox", "0 -5 10 10")
-        .attr('refX', 10)
-        .attr("markerWidth", 5)
-        .attr("markerHeight", 5)
-        .attr("orient", "auto")
-        .append("svg:path")
-        .attr("d", "M0,-5L10,0L0,5")
-        .attr("fill", "white");
+    createLink();
 
-      link.attr("marker-end", "url(#arrow)")
-      if (showLinkText) {
-        let linkText = linkContainer.append("text")
-          .attr("fill", "white")
-          .attr("x", () => {
-            return (target!.x - ((target!.x - source!.x) / 2)) + 10;
+    function createLink() {
+      document.querySelectorAll(".link-container").forEach((e: any) => {
+        e.parentElement.removeChild(e);
+      })
+      for (let i = 0; i < linkData.length; i++) {
+        console.log(linkData[i]);
+        let source = document.querySelector(`#${linkData[i]["source"]}`)?.parentElement!.getBoundingClientRect();
+        let target = document.querySelector(`#${linkData[i]["target"]}`)?.parentElement!.getBoundingClientRect();
+        let offsetX = 0;
+        let offsetY = 0;
+        console.log(document.querySelector("g.graph")?.getAttribute("transform")?.toString().split(" ")[0].split("(")[1].split(")")[0].split(","));
+        if (document.querySelector("g.graph")?.getAttribute("transform")) {
+          offsetX = parseInt(document.querySelector("g.graph")!.getAttribute("transform")!.toString().split(" ")[0].split("(")[1].split(")")[0].split(",")[0])
+          offsetY = parseInt(document.querySelector("g.graph")!.getAttribute("transform")!.toString().split(" ")[0].split("(")[1].split(")")[0].split(",")[1])
+        }
+        console.log(source, target);
+        let linkContainer = g.append('g').attr("class", "link-container")
+        let link = linkContainer.append("path")
+          .attr("stroke", "white")
+          .attr("stroke-width", "2px")
+          .attr("fill", "none")
+          .attr("d", () => {
+            // let path = `M ${paths.sources[i].x + paths.sources[i].width} ${paths.sources[i].y + (paths.sources[i].height / 2)} L${paths.sources[i].x + paths.sources[i].width + 50 - (paths.sources[i].index * 10)} ${paths.sources[i].y + (paths.sources[i].height / 2)} V${paths.sources[i].y + (paths.sources[i].height / 2)} ${paths.targets[i].y + (paths.targets[i].height / 2)} L${paths.targets[i].x - 300} ${paths.targets[i].y + (paths.targets[i].height / 2)}`;
+            let path = `M ${source!.x + source!.width - offsetX - 30} ${source!.y - offsetY - 10} L${(target!.x - offsetX) - ((target!.x - source!.x) / 2)} ${source!.y - offsetY - 10} V${source!.y - offsetY - 10} ${target!.y - offsetY - 10} L${target!.x - offsetX - 30} ${target!.y - offsetY - 10}`;
+            console.log(path);
+            return path;
           })
-          .style("clip-path", 'url(#rect)')
-          .style("stroke", "none")
-          .attr("y", () => {
-            return target!.y - 15;
-          })
-          .text(() => {
-            return "Hello World";
-          })
+        svg.append("svg:defs").append("svg:marker")
+          .attr("id", "arrow")
+          .attr("viewBox", "0 -5 10 10")
+          .attr('refX', 10)
+          .attr("markerWidth", 5)
+          .attr("markerHeight", 5)
+          .attr("orient", "auto")
+          .append("svg:path")
+          .attr("d", "M0,-5L10,0L0,5")
+          .attr("fill", "white");
+
+        link.attr("marker-end", "url(#arrow)")
+        if (showLinkText) {
+          let linkText = linkContainer.append("text")
+            .attr("fill", "white")
+            .attr("x", () => {
+              return ((target!.x - offsetX) - ((target!.x - source!.x) / 2)) + 10;
+            })
+            .style("clip-path", 'url(#rect)')
+            .style("stroke", "none")
+            .attr("y", () => {
+              return target!.y - offsetY - 15;
+            })
+            .text(() => {
+              return "Hello World";
+            })
+        }
       }
     }
 
