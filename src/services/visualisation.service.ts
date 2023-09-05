@@ -12,6 +12,7 @@ export class VisualisationService {
     const nodedata = [
       {
         "id": "pds-cbs",
+        "icon": "menu",
         "title": "PHYSICAL DATA STORAGE",
         "name": "Cloud Blob Storage",
         "level": [0, 0],
@@ -35,6 +36,7 @@ export class VisualisationService {
       },
       {
         "id": "pds-opd",
+        "icon": "menu",
         "title": "PHYSICAL DATA STORAGE",
         "name": "On Prem Database",
         "level": [0, 1],
@@ -58,6 +60,7 @@ export class VisualisationService {
       },
       {
         "id": "ldm-a",
+        "icon": "lan",
         "title": "LOGICAL DATA MAPPING",
         "name": "Account",
         "level": [1, 0],
@@ -86,6 +89,7 @@ export class VisualisationService {
       },
       {
         "id": "du-if",
+        "icon": "data_usage",
         "title": "DATA USAGE",
         "name": "Intelligent Forecasting",
         "level": [2, 0],
@@ -99,6 +103,7 @@ export class VisualisationService {
       },
       {
         "id": "du-if",
+        "icon": "data_usage",
         "title": "DATA USAGE",
         "name": "Intelligent Forecasting",
         "level": [3, 1],
@@ -190,14 +195,14 @@ export class VisualisationService {
         .html(() => {
           let nodeHTML = `
           <div class="node-container" id="${nodedata[i]["id"]}">
-          <div class="node-title"><span>${nodedata[i]["title"]}</span></div>
+          <div class="node-title"><i class="material-icons">${nodedata[i]["icon"]}</i><span>${nodedata[i]["title"]}</span></div>
           <div class="node-body">
-              <div class="node-name"><span>${nodedata[i]["name"]}</span></div>
+              <div class="node-name"><span class="node-icon">000</span><span class="name">${nodedata[i]["name"]}</span><i class="material-icons">remove</i></div>
               <div class="sub-node-container">`
 
           for (let j = 0; j < nodedata[i]["sub-node"].length; j++) {
             nodeHTML += `<div class="sub-node">
-              <div class="sub-node-name" id="${nodedata[i]["sub-node"][j]["id"]}">${nodedata[i]["sub-node"][j]["name"]}</div>
+              <div class="sub-node-name" id="${nodedata[i]["sub-node"][j]["id"]}"><span>${nodedata[i]["sub-node"][j]["name"]}</span><span><i class="material-icons" id="${nodedata[i]["sub-node"][j]["id"]}">add</i></span></div>
               <div class="sub-node-desc sub-node-desc-hidden" id="${nodedata[i]["sub-node"][j]["id"]}-desc">${nodedata[i]["sub-node"][j]["Description"]}</div>
             </div>`
           }
@@ -207,7 +212,7 @@ export class VisualisationService {
     }
 
 
-    d3.selectAll(".sub-node").on("click", (event) => {
+    d3.selectAll(".sub-node-name i").on("click", (event) => {
       console.log(event);
       document.querySelectorAll(".sub-node-desc").forEach(e => {
         console.log(e.id, event.target.id + "-desc");
@@ -254,8 +259,8 @@ export class VisualisationService {
 
         let linkContainer = g.append('g').attr("class", "link-container")
         let link = linkContainer.append("path")
-          .attr("stroke", "white")
-          .attr("stroke-width", "2px")
+          .attr("stroke", "black")
+          .attr("stroke-width", "0.5px")
           .attr("fill", "none")
           .attr("d", () => {
             // let path = `M ${paths.sources[i].x + paths.sources[i].width} ${paths.sources[i].y + (paths.sources[i].height / 2)} L${paths.sources[i].x + paths.sources[i].width + 50 - (paths.sources[i].index * 10)} ${paths.sources[i].y + (paths.sources[i].height / 2)} V${paths.sources[i].y + (paths.sources[i].height / 2)} ${paths.targets[i].y + (paths.targets[i].height / 2)} L${paths.targets[i].x - 300} ${paths.targets[i].y + (paths.targets[i].height / 2)}`;
@@ -272,7 +277,7 @@ export class VisualisationService {
           .attr("orient", "auto")
           .append("svg:path")
           .attr("d", "M0,-5L10,0L0,5")
-          .attr("fill", "white");
+          .attr("fill", "black");
 
         link.attr("marker-end", "url(#arrow)")
         if (showLinkText) {
