@@ -9,6 +9,13 @@ export class VisualisationService {
   constructor() { }
 
   generateExpandableTree(selector: string, showLinkText: boolean = true) {
+
+    let w = window,
+      d = document,
+      e = d.documentElement,
+      wg = d.getElementsByTagName('body')[0],
+      wx = w.innerWidth || e.clientWidth || wg.clientWidth,
+      wy = w.innerHeight || e.clientHeight || wg.clientHeight;
     const nodedata = [
       {
         "id": "pds-cbs",
@@ -163,6 +170,23 @@ export class VisualisationService {
 
     let g = svg.append("g").attr("class", "graph");
 
+    let filter = svg.append("defs")
+                      .append("filter")
+                      .attr("x", 0)
+                      .attr("y", 0)
+                      .attr("width", 1)
+                      .attr("height", 1)
+                      .attr("id", "background")
+                        .append("feFlood")
+                        .attr("flood-color", "white")
+                        .attr("result", "bg")
+                          .append("feMerge")
+                          .append("feMergeNode")
+                          .attr("in", "bg")
+                          .append("feMergeNode")
+                          .attr("in", "SourceGraphic")
+
+
     let zoom = d3.zoom().on("zoom", handleZoom).scaleExtent([0.4, 1])
 
     function handleZoom(e: any) {
@@ -202,7 +226,7 @@ export class VisualisationService {
 
           for (let j = 0; j < nodedata[i]["sub-node"].length; j++) {
             nodeHTML += `<div class="sub-node">
-              <div class="sub-node-name" id="${nodedata[i]["sub-node"][j]["id"]}"><span>${nodedata[i]["sub-node"][j]["name"]}</span><span><i class="material-icons" id="${nodedata[i]["sub-node"][j]["id"]}">add</i></span></div>
+              <div class="sub-node-name" id="${nodedata[i]["sub-node"][j]["id"]}"><span class="name">${nodedata[i]["sub-node"][j]["name"]}</span><span><i class="material-icons" id="${nodedata[i]["sub-node"][j]["id"]}">add</i></span></div>
               <div class="sub-node-desc sub-node-desc-hidden" id="${nodedata[i]["sub-node"][j]["id"]}-desc">${nodedata[i]["sub-node"][j]["Description"]}</div>
             </div>`
           }
@@ -282,14 +306,34 @@ export class VisualisationService {
         link.attr("marker-end", "url(#arrow)")
         if (showLinkText) {
           let linkText = linkContainer.append("text")
-            .attr("fill", "white")
+            .attr("filter", ()=>{
+              return `url(#background)`
+            })
+            .attr("fill", "black")
             .attr("x", () => {
               return ((relTarX + (relSrcX + relSrcWidth)) / 2) + 5;
             })
             .style("clip-path", 'url(#rect)')
             .style("stroke", "none")
             .attr("y", () => {
-              return relTarY + 30;
+              return relTarY + 45;
+            })
+            .text(() => {
+              return "Hello World";
+            })
+
+            let linkTextOverlay = linkContainer.append("text")
+            // .attr("filter", ()=>{
+            //   return `url(#background)`
+            // })
+            .attr("fill", "black")
+            .attr("x", () => {
+              return ((relTarX + (relSrcX + relSrcWidth)) / 2) + 5;
+            })
+            .style("clip-path", 'url(#rect)')
+            .style("stroke", "none")
+            .attr("y", () => {
+              return relTarY + 45;
             })
             .text(() => {
               return "Hello World";
@@ -299,10 +343,13 @@ export class VisualisationService {
       }
     }
 
+    function updateWindow() {
+      wx = w.innerWidth || e.clientWidth || wg.clientWidth;
+      wy = w.innerHeight || e.clientHeight || wg.clientHeight;
 
-    setTimeout(() => {
-      console.log(document.querySelector("#du-if-d2")?.getBoundingClientRect().x)
-    }, 200);
+      svg.attr("width", wx).attr("height", wy);
+    }
+    d3.select(window).on('resize.updatesvg', updateWindow);
 
   }
 }
