@@ -8,7 +8,7 @@ export class VisualisationService {
 
   constructor() { }
 
-  generateExpandableTree(selector: string, showLinkText: boolean = true) {
+  generateExpandableTree(selector: string, data: any, showLinkText: boolean = true) {
 
     let w = window,
       d = document,
@@ -16,149 +16,14 @@ export class VisualisationService {
       wg = d.getElementsByTagName('body')[0],
       wx = w.innerWidth || e.clientWidth || wg.clientWidth,
       wy = w.innerHeight || e.clientHeight || wg.clientHeight;
-    const nodedata = [
-      {
-        "id": "pds-cbs",
-        "icon": "menu",
-        "title": "PHYSICAL DATA STORAGE",
-        "name": "Cloud Blob Storage",
-        "level": [0, 0],
-        "sub-node": [
-          {
-            "id": "pds-cbs-ad",
-            "name": "Account Documents",
-            "Description": "Lorem Ipsum I'm trying to pass a value to a d3 click event bind to a group composed of a circle and a letter. However this value remains 'undefined' in the callback function. On the other hand if I pass the same value to another function of the same group, such as .text(d => d.value) that works fine. The issue is only with the click event. Please find my piece of code:"
-          },
-          {
-            "id": "pds-cbs-ar",
-            "name": "Account Reports",
-            "Description": "Lorem Ipsum"
-          },
-          {
-            "id": "pds-cbs-r",
-            "name": "Roles",
-            "Description": "Lorem Ipsum"
-          }
-        ]
-      },
-      {
-        "id": "pds-opd",
-        "icon": "menu",
-        "title": "PHYSICAL DATA STORAGE",
-        "name": "On Prem Database",
-        "level": [0, 1],
-        "sub-node": [
-          {
-            "id": "pds-opd-r",
-            "name": "Revenue",
-            "Description": "Lorem Ipsum"
-          },
-          {
-            "id": "pds-opd-ti",
-            "name": "Transaction ID",
-            "Description": "Lorem Ipsum"
-          },
-          {
-            "id": "pds-opd-da",
-            "name": "Dollar Amount",
-            "Description": "Lorem Ipsum"
-          }
-        ]
-      },
-      {
-        "id": "ldm-a",
-        "icon": "lan",
-        "title": "LOGICAL DATA MAPPING",
-        "name": "Account",
-        "level": [1, 0],
-        "sub-node": [
-          {
-            "id": "ldm-a-ai",
-            "name": "Account ID",
-            "Description": "Lorem Ipsum"
-          },
-          {
-            "id": "ldm-a-co",
-            "name": "Created On",
-            "Description": "Lorem Ipsum"
-          },
-          {
-            "id": "ldm-a-r",
-            "name": "Revenue",
-            "Description": "Lorem Ipsum"
-          },
-          {
-            "id": "ldm-a-a",
-            "name": "Address",
-            "Description": "Lorem Ipsum"
-          }
-        ]
-      },
-      {
-        "id": "du-if",
-        "icon": "data_usage",
-        "title": "DATA USAGE",
-        "name": "Intelligent Forecasting",
-        "level": [2, 0],
-        "sub-node": [
-          {
-            "id": "du-if-d",
-            "name": "Description",
-            "Description": "Lorem Ipsum"
-          }
-        ]
-      },
-      {
-        "id": "du-if",
-        "icon": "data_usage",
-        "title": "DATA USAGE",
-        "name": "Intelligent Forecasting",
-        "level": [3, 1],
-        "sub-node": [
-          {
-            "id": "du-if-d2",
-            "name": "Description",
-            "Description": "Lorem Ipsum"
-          }
-        ]
-      }
-    ]
 
-    const linkData = [
-      {
-        "source": "pds-cbs-ad",
-        "target": "ldm-a-ai"
-      },
-      {
-        "source": "pds-cbs-ad",
-        "target": "ldm-a-co"
-      },
-      {
-        "source": "pds-opd-da",
-        "target": "ldm-a-r"
-      },
-      {
-        "source": "ldm-a-co",
-        "target": "du-if-d"
-      },
-      {
-        "source": "ldm-a-r",
-        "target": "du-if-d"
-      },
-      {
-        "source": "ldm-a-a",
-        "target": "du-if-d2"
-      },
-      {
-        "source": "pds-cbs-ar",
-        "target": "ldm-a-a"
-      }
-    ]
 
     document.querySelectorAll("svg").forEach((e: any) => {
       e.parentElement.removeChild(e);
     })
 
+    const nodedata = data["nodes"];
+    const linkData = data["links"]
 
 
     let conatinerWidth: number = document.querySelector(selector)!.getBoundingClientRect().width,
@@ -171,20 +36,20 @@ export class VisualisationService {
     let g = svg.append("g").attr("class", "graph");
 
     let filter = svg.append("defs")
-                      .append("filter")
-                      .attr("x", 0)
-                      .attr("y", 0)
-                      .attr("width", 1)
-                      .attr("height", 1)
-                      .attr("id", "background")
-                        .append("feFlood")
-                        .attr("flood-color", "white")
-                        .attr("result", "bg")
-                          .append("feMerge")
-                          .append("feMergeNode")
-                          .attr("in", "bg")
-                          .append("feMergeNode")
-                          .attr("in", "SourceGraphic")
+      .append("filter")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", 1)
+      .attr("height", 1)
+      .attr("id", "background")
+      .append("feFlood")
+      .attr("flood-color", "white")
+      .attr("result", "bg")
+      .append("feMerge")
+      .append("feMergeNode")
+      .attr("in", "bg")
+      .append("feMergeNode")
+      .attr("in", "SourceGraphic")
 
 
     let zoom = d3.zoom().on("zoom", handleZoom).scaleExtent([0.4, 1])
@@ -203,14 +68,14 @@ export class VisualisationService {
         .append("foreignObject")
         .attr("height", "40")
         .attr("width", "40")
-        .attr("x", (nodedata[i]["level"][0] * 600))
+        .attr("x", (nodedata[i]["grid_position"][0] * 600))
         .attr("y", () => {
           let yPosition;
           if (i == 0) {
             yPosition = 0;
           } else {
             let n = document.querySelector(`#${nodedata[i - 1]["id"]}`)?.getBoundingClientRect()
-            yPosition = ((n!.y + n!.height + 100) * nodedata[i]["level"][1]);
+            yPosition = ((n!.y + n!.height + 100) * nodedata[i]["grid_position"][1]);
           }
 
           return yPosition;
@@ -219,18 +84,24 @@ export class VisualisationService {
         .html(() => {
           let nodeHTML = `
           <div class="node-container" id="${nodedata[i]["id"]}">
-          <div class="node-title"><i class="material-icons">${nodedata[i]["icon"]}</i><span>${nodedata[i]["title"]}</span></div>
-          <div class="node-body">
-              <div class="node-name"><span class="node-icon">000</span><span class="name">${nodedata[i]["name"]}</span><i class="material-icons">remove</i></div>
-              <div class="sub-node-container">`
+          <div class="node-title"><i class="material-icons">${nodedata[i]["icon"]}</i><span>${nodedata[i]["name"]}</span></div>`
 
-          for (let j = 0; j < nodedata[i]["sub-node"].length; j++) {
-            nodeHTML += `<div class="sub-node">
-              <div class="sub-node-name" id="${nodedata[i]["sub-node"][j]["id"]}"><span class="name">${nodedata[i]["sub-node"][j]["name"]}</span><span><i class="material-icons" id="${nodedata[i]["sub-node"][j]["id"]}">add</i></span></div>
-              <div class="sub-node-desc sub-node-desc-hidden" id="${nodedata[i]["sub-node"][j]["id"]}-desc">${nodedata[i]["sub-node"][j]["Description"]}</div>
-            </div>`
+          for (let k = 0; k < nodedata[i]["level_1"].length; k++) {
+            nodeHTML += `<div class="node-body">
+            <div class="node-name"><span class="node-icon">000</span><span class="name">${nodedata[i]["level_1"][k]["name"]}</span><i class="material-icons">remove</i></div>
+            <div class="sub-node-container">`
+            console.log(nodedata[i]["level_1"][k]);
+            
+            for (let j = 0; j < nodedata[i]["level_1"][k]["level_2"].length; j++) {
+              nodeHTML += `<div class="sub-node">
+            <div class="sub-node-name" id="${nodedata[i]["level_1"][k]["level_2"][j]["id"]}"><span class="name">${nodedata[i]["level_1"][k]["level_2"][j]["name"]}</span><span><i class="material-icons" id="${nodedata[i]["level_1"][k]["level_2"][j]["id"]}">add</i></span></div>
+            <div class="sub-node-desc sub-node-desc-hidden" id="${nodedata[i]["level_1"][k]["level_2"][j]["id"]}-desc">${nodedata[i]["level_1"][k]["level_2"][j]["Description"]}</div>
+          </div>`
+            }
+            nodeHTML += `</div></div>`
           }
-          nodeHTML += `</div></div></div>`
+
+          nodeHTML += `</div>`
           return nodeHTML;
         })
     }
@@ -256,12 +127,14 @@ export class VisualisationService {
       })
 
       for (let i = 0; i < linkData.length; i++) {
-        console.log(`${linkData[i]["source"].split("-")[0]}-${linkData[i]["source"].split("-")[1]}`)
-        console.log(nodedata.filter(item => item.id.toLowerCase().includes(`${linkData[i]["source"].split("-")[0]}-${linkData[i]["source"].split("-")[1]}`))[0].level[1]);
-        let linkOffset = (nodedata.filter(item => item.id.toLowerCase().includes(`${linkData[i]["source"].split("-")[0]}-${linkData[i]["source"].split("-")[1]}`))[0].level[1]) * 10;
+        console.log(`${linkData[i]["source"].split("-")[0]}`)
+        console.log(nodedata.filter((item: any) => item.id.toLowerCase().includes(`${linkData[i]["source"].split("-")[0]}`)));
+        let linkOffset = (nodedata.filter((item: any) => item.id.toLowerCase().includes(`${linkData[i]["source"].split("-")[0]}`))[0].grid_position[1]) * 10;
         console.log(linkData[i]);
         let source = document.querySelector(`#${linkData[i]["source"]}`)?.parentElement!.getBoundingClientRect();
         let target = document.querySelector(`#${linkData[i]["target"]}`)?.parentElement!.getBoundingClientRect();
+        console.log(target);
+        
         let graph = document.querySelector(`g.graph`)?.getBoundingClientRect();
         let relSrcX = (source!.x - document.querySelector(`g.graph`)!.getBoundingClientRect()!.x);
         let relSrcY = (source!.y - document.querySelector(`g.graph`)!.getBoundingClientRect()!.y);
@@ -306,7 +179,7 @@ export class VisualisationService {
         link.attr("marker-end", "url(#arrow)")
         if (showLinkText) {
           let linkText = linkContainer.append("text")
-            .attr("filter", ()=>{
+            .attr("filter", () => {
               return `url(#background)`
             })
             .attr("fill", "black")
@@ -322,7 +195,7 @@ export class VisualisationService {
               return "Hello World";
             })
 
-            let linkTextOverlay = linkContainer.append("text")
+          let linkTextOverlay = linkContainer.append("text")
             // .attr("filter", ()=>{
             //   return `url(#background)`
             // })

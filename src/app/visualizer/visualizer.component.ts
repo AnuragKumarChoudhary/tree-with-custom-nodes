@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { VisualisationService } from 'src/services/visualisation.service';
 
@@ -8,10 +9,14 @@ import { VisualisationService } from 'src/services/visualisation.service';
 })
 export class VisualizerComponent implements OnInit {
 
-  constructor(private visualisation: VisualisationService) { }
+  constructor(private visualisation: VisualisationService, private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.visualisation.generateExpandableTree(".graph-container");
+    this.http.get("./assets/data.json").subscribe(data => {
+      console.log(data);
+      this.visualisation.generateExpandableTree(".graph-container", data);
+
+    })
   }
 
 }

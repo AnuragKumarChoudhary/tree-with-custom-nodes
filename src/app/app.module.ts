@@ -5,7 +5,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { VisualizerComponent } from './visualizer/visualizer.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatIconModule } from '@angular/material/icon';
+import { HttpClientModule } from '@angular/common/http';
+
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { MatIconModule } from '@angular/material/icon';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatIconModule
+    HttpClientModule,
+    // MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]

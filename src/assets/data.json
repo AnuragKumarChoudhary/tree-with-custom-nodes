@@ -1,0 +1,168 @@
+{
+    "nodes": [
+        {
+            "id": "pds",
+            "icon": "menu",
+            "name": "PHYSICAL DATA STORAGE",
+            "level_1": [
+                {
+                    "id": "pds-cbs",
+                    "name": "Cloud Blob Storage",
+                    "level_2": [
+                        {
+                            "id": "pds-cbs-ad",
+                            "name": "Account Documents",
+                            "Description": "Lorem Ipsum I'm trying to pass a value to a d3 click event bind to a group composed of a circle and a letter. However this value remains 'undefined' in the callback function. On the other hand if I pass the same value to another function of the same group, such as .text(d => d.value) that works fine. The issue is only with the click event. Please find my piece of code:"
+                        },
+                        {
+                            "id": "pds-cbs-ar",
+                            "name": "Account Reports",
+                            "Description": "Lorem Ipsum"
+                        },
+                        {
+                            "id": "pds-cbs-r",
+                            "name": "Roles",
+                            "Description": "Lorem Ipsum"
+                        }
+                    ]
+                },
+                {
+                    "id": "pds-opd",
+                    "name": "On Prem Database",
+                    "level_2": [
+                        {
+                            "id": "pds-opd-r",
+                            "name": "Revenue",
+                            "Description": "Lorem Ipsum"
+                        },
+                        {
+                            "id": "pds-opd-ti",
+                            "name": "Transaction ID",
+                            "Description": "Lorem Ipsum"
+                        },
+                        {
+                            "id": "pds-opd-da",
+                            "name": "Dollar Amount",
+                            "Description": "Lorem Ipsum"
+                        }
+                    ]
+                }
+            ],
+            "grid_position": [
+                0,
+                0
+            ]
+        },
+        {
+            "id": "ldm",
+            "icon": "lan",
+            "name": "LOGICAL DATA MAPPING",
+            "level_1": [
+                {
+                    "id": "ldm-a",
+                    "name": "Account",
+                    "level_2": [
+                        {
+                            "id": "ldm-a-ai",
+                            "name": "Account ID",
+                            "Description": "Lorem Ipsum"
+                        },
+                        {
+                            "id": "ldm-a-co",
+                            "name": "Created On",
+                            "Description": "Lorem Ipsum"
+                        },
+                        {
+                            "id": "ldm-a-r",
+                            "name": "Revenue",
+                            "Description": "Lorem Ipsum"
+                        },
+                        {
+                            "id": "ldm-a-a",
+                            "name": "Address",
+                            "Description": "Lorem Ipsum"
+                        }
+                    ]
+                }
+            ],
+            "grid_position": [
+                1,
+                0
+            ]
+        },
+        {
+            "id": "du",
+            "icon": "data_usage",
+            "name": "DATA USAGE",
+            "level_1": [
+                {
+                    "id": "du-if",
+                    "name": "Intelligent Forecasting",
+                    "level_2": [
+                        {
+                            "id": "du-if-d",
+                            "name": "Description",
+                            "Description": "Lorem Ipsum"
+                        }
+                    ]
+                }
+            ],
+            "grid_position": [
+                2,
+                0
+            ]
+        },
+        {
+            "id": "du2",
+            "icon": "data_usage",
+            "name": "DATA USAGE",
+            "level_1": [
+                {
+                    "id": "du2-if",
+                    "name": "Intelligent Forecasting",
+                    "level_2": [
+                        {
+                            "id": "du2-if-d",
+                            "name": "Description",
+                            "Description": "Lorem Ipsum"
+                        }
+                    ]
+                }
+            ],
+            "grid_position": [
+                3,
+                1
+            ]
+        }
+    ],
+    "links": [
+        {
+            "source": "pds-cbs-ad",
+            "target": "ldm-a-ai"
+        },
+        {
+            "source": "pds-cbs-ad",
+            "target": "ldm-a-co"
+        },
+        {
+            "source": "pds-opd-da",
+            "target": "ldm-a-r"
+        },
+        {
+            "source": "ldm-a-co",
+            "target": "du-if-d"
+        },
+        {
+            "source": "ldm-a-r",
+            "target": "du-if-d"
+        },
+        {
+            "source": "ldm-a-a",
+            "target": "du2-if-d"
+        },
+        {
+            "source": "pds-cbs-ar",
+            "target": "ldm-a-a"
+        }
+    ]
+}

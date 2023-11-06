@@ -41,6 +41,7 @@ body {
     height: auto;
     background-color: rgba(108, 180, 238);
     border-radius: 10px;
+    margin-bottom: 10px;
     /* overflow: hidden; */
 }
 
@@ -164,3 +165,5 @@ path {
     border-radius: 8px;
     background-color: #747474;
 }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
