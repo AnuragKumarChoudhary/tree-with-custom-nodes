@@ -91,7 +91,7 @@ export class VisualisationService {
             <div class="node-name"><span class="node-icon">000</span><span class="name">${nodedata[i]["level_1"][k]["name"]}</span><i class="material-icons">remove</i></div>
             <div class="sub-node-container">`
             console.log(nodedata[i]["level_1"][k]);
-            
+
             for (let j = 0; j < nodedata[i]["level_1"][k]["level_2"].length; j++) {
               nodeHTML += `<div class="sub-node">
             <div class="sub-node-name" id="${nodedata[i]["level_1"][k]["level_2"][j]["id"]}"><span class="name">${nodedata[i]["level_1"][k]["level_2"][j]["name"]}</span><span><i class="material-icons" id="${nodedata[i]["level_1"][k]["level_2"][j]["id"]}">add</i></span></div>
@@ -128,13 +128,14 @@ export class VisualisationService {
 
       for (let i = 0; i < linkData.length; i++) {
         console.log(`${linkData[i]["source"].split("-")[0]}`)
-        console.log(nodedata.filter((item: any) => item.id.toLowerCase().includes(`${linkData[i]["source"].split("-")[0]}`)));
-        let linkOffset = (nodedata.filter((item: any) => item.id.toLowerCase().includes(`${linkData[i]["source"].split("-")[0]}`))[0].grid_position[1]) * 10;
+        // console.log(nodedata.filter((item: any) => item));
+        // let linkOffset = (nodedata.filter((item: any) => item.id.toLowerCase().includes(`${linkData[i]["source"].split("-")[0]}`))[0].grid_position[1])+1 * 10;
+        // let linkOffset = i*5;
         console.log(linkData[i]);
         let source = document.querySelector(`#${linkData[i]["source"]}`)?.parentElement!.getBoundingClientRect();
         let target = document.querySelector(`#${linkData[i]["target"]}`)?.parentElement!.getBoundingClientRect();
         console.log(target);
-        
+
         let graph = document.querySelector(`g.graph`)?.getBoundingClientRect();
         let relSrcX = (source!.x - document.querySelector(`g.graph`)!.getBoundingClientRect()!.x);
         let relSrcY = (source!.y - document.querySelector(`g.graph`)!.getBoundingClientRect()!.y);
@@ -160,8 +161,15 @@ export class VisualisationService {
           .attr("stroke-width", "0.5px")
           .attr("fill", "none")
           .attr("d", () => {
-            // let path = `M ${paths.sources[i].x + paths.sources[i].width} ${paths.sources[i].y + (paths.sources[i].height / 2)} L${paths.sources[i].x + paths.sources[i].width + 50 - (paths.sources[i].index * 10)} ${paths.sources[i].y + (paths.sources[i].height / 2)} V${paths.sources[i].y + (paths.sources[i].height / 2)} ${paths.targets[i].y + (paths.targets[i].height / 2)} L${paths.targets[i].x - 300} ${paths.targets[i].y + (paths.targets[i].height / 2)}`;
-            let path = `M ${relSrcX + relSrcWidth + 20} ${relSrcY + 40} L${((relTarX + (relSrcX + relSrcWidth)) / 2) - 90 + linkOffset} ${relSrcY + 40} V${relSrcY + 40} ${relTarY + 40} L${relTarX + 20} ${relTarY + 40}`;
+            console.log(relSrcX, relTarX);
+            let path = ``;
+            if (relSrcX == relTarX) {
+              relTarX = relSrcX + relSrcWidth;
+              path = `M ${relSrcX + relSrcWidth + 20} ${relSrcY + 40} L${((relTarX + (relSrcX + relSrcWidth)) / 2) + 90} ${relSrcY + 40} V${relSrcY + 40} ${relTarY + 40} L${relTarX + 20} ${relTarY + 40}`;
+            } else {
+              // path = `M ${paths.sources[i].x + paths.sources[i].width} ${paths.sources[i].y + (paths.sources[i].height / 2)} L${paths.sources[i].x + paths.sources[i].width + 50 - (paths.sources[i].index * 10)} ${paths.sources[i].y + (paths.sources[i].height / 2)} V${paths.sources[i].y + (paths.sources[i].height / 2)} ${paths.targets[i].y + (paths.targets[i].height / 2)} L${paths.targets[i].x - 300} ${paths.targets[i].y + (paths.targets[i].height / 2)}`;
+              path = `M ${relSrcX + relSrcWidth + 20} ${relSrcY + 40} L${((relTarX + (relSrcX + relSrcWidth)) / 2) - 90} ${relSrcY + 40} V${relSrcY + 40} ${relTarY + 40} L${relTarX + 20} ${relTarY + 40}`;
+            }
             console.log(path);
             return path;
           })
@@ -184,12 +192,24 @@ export class VisualisationService {
             })
             .attr("fill", "black")
             .attr("x", () => {
-              return ((relTarX + (relSrcX + relSrcWidth)) / 2) + 5;
+              let textX = 0;
+              if (relTarX == (relSrcX + relSrcWidth)) {
+                textX = ((relTarX + (relSrcX + relSrcWidth)) / 2) + 55;
+              } else {
+                textX = ((relTarX + (relSrcX + relSrcWidth)) / 2) + 5;
+              }
+              return textX;
             })
             .style("clip-path", 'url(#rect)')
             .style("stroke", "none")
             .attr("y", () => {
-              return relTarY + 45;
+              let textY = 0;
+              if (relTarX == (relSrcX + relSrcWidth)) {
+                textY = relTarY + 25;
+              } else {
+                textY = relTarY + 45;
+              }
+              return textY;
             })
             .text(() => {
               return "Hello World";
@@ -201,12 +221,24 @@ export class VisualisationService {
             // })
             .attr("fill", "black")
             .attr("x", () => {
-              return ((relTarX + (relSrcX + relSrcWidth)) / 2) + 5;
+              let textX = 0;
+              if (relTarX == (relSrcX + relSrcWidth)) {
+                textX = ((relTarX + (relSrcX + relSrcWidth)) / 2) + 55;
+              } else {
+                textX = ((relTarX + (relSrcX + relSrcWidth)) / 2) + 5;
+              }
+              return textX;
             })
             .style("clip-path", 'url(#rect)')
             .style("stroke", "none")
             .attr("y", () => {
-              return relTarY + 45;
+              let textY = 0;
+              if (relTarX == (relSrcX + relSrcWidth)) {
+                textY = relTarY + 25;
+              } else {
+                textY = relTarY + 45;
+              }
+              return textY;
             })
             .text(() => {
               return "Hello World";

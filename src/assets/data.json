@@ -163,6 +163,10 @@
         {
             "source": "pds-cbs-ar",
             "target": "ldm-a-a"
+        },
+        {
+            "source": "pds-cbs-r",
+            "target": "pds-opd-ti"
         }
     ]
 }
