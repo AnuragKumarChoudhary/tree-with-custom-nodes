@@ -167,6 +167,14 @@
         {
             "source": "pds-cbs-r",
             "target": "pds-opd-ti"
+        },
+        {
+            "source": "pds",
+            "target": "pds-opd-ti"
+        },
+        {
+            "source": "pds-cbs",
+            "target": "pds-opd-ti"
         }
     ]
 }

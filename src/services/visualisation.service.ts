@@ -83,14 +83,14 @@ export class VisualisationService {
         .style("overflow", "visible")
         .html(() => {
           let nodeHTML = `
-          <div class="node-container" id="${nodedata[i]["id"]}">
-          <div class="node-title"><i class="material-icons">${nodedata[i]["icon"]}</i><span>${nodedata[i]["name"]}</span></div>`
+          <div class="node-container">
+          <div class="node-title" id="${nodedata[i]["id"]}"><i class="material-icons">${nodedata[i]["icon"]}</i><span>${nodedata[i]["name"]}</span></div>`
 
           for (let k = 0; k < nodedata[i]["level_1"].length; k++) {
             nodeHTML += `<div class="node-body">
-            <div class="node-name"><span class="node-icon">000</span><span class="name">${nodedata[i]["level_1"][k]["name"]}</span><i class="material-icons">remove</i></div>
+            <div class="node-name"  id="${nodedata[i]["level_1"][k]["id"]}"><span class="node-icon">000</span><span class="name">${nodedata[i]["level_1"][k]["name"]}</span><i class="material-icons">remove</i></div>
             <div class="sub-node-container">`
-            console.log(nodedata[i]["level_1"][k]);
+            // console.log(nodedata[i]["level_1"][k]);
 
             for (let j = 0; j < nodedata[i]["level_1"][k]["level_2"].length; j++) {
               nodeHTML += `<div class="sub-node">
@@ -121,20 +121,70 @@ export class VisualisationService {
 
     createLink();
 
+    function checkSameGrid(link: any) {
+      // console.log(link);
+      let sourceNode = nodedata.filter((item: any) => {
+        let src: any;
+        // console.log(item.id, link["source"]);
+
+        if (item.id.toLowerCase() == link["source"]) {
+          src = item;
+        }
+        for (let lvl_1 of item.level_1) {
+          // console.log(lvl_1.id, link["source"]);
+          if (lvl_1.id.toLowerCase() == link["source"]) {
+            src = item;
+          }
+          for (let lvl_2 of lvl_1.level_2) {
+            // console.log(lvl_2.id, link["source"]);
+            if (lvl_2.id.toLowerCase() == link["source"]) {
+              src = item;
+            }
+          }
+        }
+        return src;
+      });
+      // console.log(sourceNode[0].grid_position[1]);
+      let targetNode = nodedata.filter((item: any) => {
+        let tar: any;
+        // console.log(item.id, link["target"]);
+
+        if (item.id.toLowerCase() == link["target"]) {
+          tar = item;
+        }
+        for (let lvl_1 of item.level_1) {
+          // console.log(lvl_1.id, link["target"]);
+          if (lvl_1.id.toLowerCase() == link["target"]) {
+            tar = item;
+          }
+          for (let lvl_2 of lvl_1.level_2) {
+            // console.log(lvl_2.id, link["target"]);
+            if (lvl_2.id.toLowerCase() == link["target"]) {
+              tar = item;
+            }
+          }
+        }
+        return tar;
+      });
+      // console.log(targetNode[0].grid_position[1]);
+      return (sourceNode[0].grid_position[0] == targetNode[0].grid_position[0])
+    }
+
     function createLink() {
       document.querySelectorAll(".link-container").forEach((e: any) => {
         e.parentElement.removeChild(e);
       })
 
       for (let i = 0; i < linkData.length; i++) {
-        console.log(`${linkData[i]["source"].split("-")[0]}`)
+        // console.log(checkSameGrid(linkData[i]));
+        
         // console.log(nodedata.filter((item: any) => item));
         // let linkOffset = (nodedata.filter((item: any) => item.id.toLowerCase().includes(`${linkData[i]["source"].split("-")[0]}`))[0].grid_position[1])+1 * 10;
         // let linkOffset = i*5;
-        console.log(linkData[i]);
+        // console.log(linkData[i]);
         let source = document.querySelector(`#${linkData[i]["source"]}`)?.parentElement!.getBoundingClientRect();
         let target = document.querySelector(`#${linkData[i]["target"]}`)?.parentElement!.getBoundingClientRect();
-        console.log(target);
+        // console.log(target);
 
         let graph = document.querySelector(`g.graph`)?.getBoundingClientRect();
         let relSrcX = (source!.x - document.querySelector(`g.graph`)!.getBoundingClientRect()!.x);
@@ -144,7 +194,7 @@ export class VisualisationService {
         let relSrcWidth = source!.width;
 
         if (document.querySelector("g.graph")!.getAttribute("transform")) {
-          console.log(100 / parseFloat(document.querySelector("g.graph")!.getAttribute("transform")!.toString().split(" ")[1].split("(")[1].split(")")[0]));
+          // console.log(100 / parseFloat(document.querySelector("g.graph")!.getAttribute("transform")!.toString().split(" ")[1].split("(")[1].split(")")[0]));
           relSrcX = relSrcX * (1 / parseFloat(document.querySelector("g.graph")!.getAttribute("transform")!.toString().split(" ")[1].split("(")[1].split(")")[0]))
           relSrcY = relSrcY * (1 / parseFloat(document.querySelector("g.graph")!.getAttribute("transform")!.toString().split(" ")[1].split("(")[1].split(")")[0]))
           relTarX = relTarX * (1 / parseFloat(document.querySelector("g.graph")!.getAttribute("transform")!.toString().split(" ")[1].split("(")[1].split(")")[0]))
@@ -152,8 +202,8 @@ export class VisualisationService {
           relSrcWidth = relSrcWidth * (1 / parseFloat(document.querySelector("g.graph")!.getAttribute("transform")!.toString().split(" ")[1].split("(")[1].split(")")[0]))
         }
 
-        console.log(graph, source, target);
-        console.log(relSrcX, relSrcY, relTarX, relTarY);
+        // console.log(graph, source, target);
+        console.log(relSrcX, relSrcWidth, relSrcY, relTarX, relTarY);
 
         let linkContainer = g.append('g').attr("class", "link-container")
         let link = linkContainer.append("path")
@@ -161,9 +211,9 @@ export class VisualisationService {
           .attr("stroke-width", "0.5px")
           .attr("fill", "none")
           .attr("d", () => {
-            console.log(relSrcX, relTarX);
+            // console.log(relSrcX, relTarX);
             let path = ``;
-            if (relSrcX == relTarX) {
+            if (checkSameGrid(linkData[i])) {
               relTarX = relSrcX + relSrcWidth;
               path = `M ${relSrcX + relSrcWidth + 20} ${relSrcY + 40} L${((relTarX + (relSrcX + relSrcWidth)) / 2) + 90} ${relSrcY + 40} V${relSrcY + 40} ${relTarY + 40} L${relTarX + 20} ${relTarY + 40}`;
             } else {
@@ -193,7 +243,7 @@ export class VisualisationService {
             .attr("fill", "black")
             .attr("x", () => {
               let textX = 0;
-              if (relTarX == (relSrcX + relSrcWidth)) {
+              if (checkSameGrid(linkData[i])) {
                 textX = ((relTarX + (relSrcX + relSrcWidth)) / 2) + 55;
               } else {
                 textX = ((relTarX + (relSrcX + relSrcWidth)) / 2) + 5;
@@ -222,7 +272,7 @@ export class VisualisationService {
             .attr("fill", "black")
             .attr("x", () => {
               let textX = 0;
-              if (relTarX == (relSrcX + relSrcWidth)) {
+              if (checkSameGrid(linkData[i])) {
                 textX = ((relTarX + (relSrcX + relSrcWidth)) / 2) + 55;
               } else {
                 textX = ((relTarX + (relSrcX + relSrcWidth)) / 2) + 5;
