@@ -77,7 +77,6 @@ export class VisualisationService {
             let n = document.querySelector(`#${nodedata[i - 1]["id"]}`)?.getBoundingClientRect()
             yPosition = ((n!.y + n!.height + 100) * nodedata[i]["grid_position"][1]);
           }
-
           return yPosition;
         })
         .style("overflow", "visible")
@@ -103,11 +102,12 @@ export class VisualisationService {
               nodeHTML += `</div></div>`
             }
 
-            nodeHTML += `</div>`
+            nodeHTML += `</div>`;
+            return nodeHTML;
           } catch (error) {
             console.log(error);
+            return "";
           }
-          return nodeHTML;
         })
     }
 
@@ -240,11 +240,12 @@ export class VisualisationService {
                 // path = `M ${paths.sources[i].x + paths.sources[i].width} ${paths.sources[i].y + (paths.sources[i].height / 2)} L${paths.sources[i].x + paths.sources[i].width + 50 - (paths.sources[i].index * 10)} ${paths.sources[i].y + (paths.sources[i].height / 2)} V${paths.sources[i].y + (paths.sources[i].height / 2)} ${paths.targets[i].y + (paths.targets[i].height / 2)} L${paths.targets[i].x - 300} ${paths.targets[i].y + (paths.targets[i].height / 2)}`;
                 path = `M ${relSrcX + relSrcWidth + 20} ${relSrcY + 40} L${((relTarX + (relSrcX + relSrcWidth)) / 2) - 90} ${relSrcY + 40} V${relSrcY + 40} ${relTarY + 40} L${relTarX + 20} ${relTarY + 40}`;
               }
+              // console.log(path);
+              return path;
             } catch (error) {
               console.log(error);
+              return "";
             }
-            // console.log(path);
-            return path;
           })
         svg.append("svg:defs").append("svg:marker")
           .attr("id", "arrow")
