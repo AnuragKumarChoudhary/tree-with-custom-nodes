@@ -82,26 +82,31 @@ export class VisualisationService {
         })
         .style("overflow", "visible")
         .html(() => {
-          let nodeHTML = `
-          <div class="node-container">
-          <div class="node-title" id="${nodedata[i]["id"]}"><i class="material-icons">${nodedata[i]["icon"]}</i><span>${nodedata[i]["name"]}</span></div>`
+          let nodeHTML = "";
+          try {
+            nodeHTML = `
+              <div class="node-container">
+              <div class="node-title" id="${nodedata[i]["id"]}"><i class="material-icons">${nodedata[i]["icon"]}</i><span>${nodedata[i]["name"]}</span></div>`
 
-          for (let k = 0; k < nodedata[i]["level_1"].length; k++) {
-            nodeHTML += `<div class="node-body">
-            <div class="node-name"  id="${nodedata[i]["level_1"][k]["id"]}"><span class="node-icon">000</span><span class="name">${nodedata[i]["level_1"][k]["name"]}</span><i class="material-icons">remove</i></div>
-            <div class="sub-node-container">`
-            // console.log(nodedata[i]["level_1"][k]);
+            for (let k = 0; k < nodedata[i]["level_1"].length; k++) {
+              nodeHTML += `<div class="node-body">
+                <div class="node-name"  id="${nodedata[i]["level_1"][k]["id"]}"><span class="node-icon">000</span><span class="name">${nodedata[i]["level_1"][k]["name"]}</span><i class="material-icons">remove</i></div>
+                <div class="sub-node-container">`
+              // console.log(nodedata[i]["level_1"][k]);
 
-            for (let j = 0; j < nodedata[i]["level_1"][k]["level_2"].length; j++) {
-              nodeHTML += `<div class="sub-node">
-            <div class="sub-node-name" id="${nodedata[i]["level_1"][k]["level_2"][j]["id"]}"><span class="name">${nodedata[i]["level_1"][k]["level_2"][j]["name"]}</span><span><i class="material-icons" id="${nodedata[i]["level_1"][k]["level_2"][j]["id"]}">add</i></span></div>
-            <div class="sub-node-desc sub-node-desc-hidden" id="${nodedata[i]["level_1"][k]["level_2"][j]["id"]}-desc">${nodedata[i]["level_1"][k]["level_2"][j]["Description"]}</div>
-          </div>`
+              for (let j = 0; j < nodedata[i]["level_1"][k]["level_2"].length; j++) {
+                nodeHTML += `<div class="sub-node">
+                <div class="sub-node-name" id="${nodedata[i]["level_1"][k]["level_2"][j]["id"]}"><span class="name">${nodedata[i]["level_1"][k]["level_2"][j]["name"]}</span><span><i class="material-icons" id="${nodedata[i]["level_1"][k]["level_2"][j]["id"]}">add</i></span></div>
+                <div class="sub-node-desc sub-node-desc-hidden" id="${nodedata[i]["level_1"][k]["level_2"][j]["id"]}-desc">${nodedata[i]["level_1"][k]["level_2"][j]["Description"]}</div>
+              </div>`
+              }
+              nodeHTML += `</div></div>`
             }
-            nodeHTML += `</div></div>`
-          }
 
-          nodeHTML += `</div>`
+            nodeHTML += `</div>`
+          } catch (error) {
+            console.log(error);
+          }
           return nodeHTML;
         })
     }
@@ -127,20 +132,25 @@ export class VisualisationService {
         let src: any;
         // console.log(item.id, link["source"]);
 
-        if (item.id.toLowerCase() == link["source"]) {
-          src = item;
-        }
-        for (let lvl_1 of item.level_1) {
-          // console.log(lvl_1.id, link["source"]);
-          if (lvl_1.id.toLowerCase() == link["source"]) {
+        try {
+          if (item.id.toLowerCase() == link["source"]) {
             src = item;
           }
-          for (let lvl_2 of lvl_1.level_2) {
-            // console.log(lvl_2.id, link["source"]);
-            if (lvl_2.id.toLowerCase() == link["source"]) {
+          for (let lvl_1 of item.level_1) {
+            // console.log(lvl_1.id, link["source"]);
+            if (lvl_1.id.toLowerCase() == link["source"]) {
               src = item;
             }
+            for (let lvl_2 of lvl_1.level_2) {
+              // console.log(lvl_2.id, link["source"]);
+              if (lvl_2.id.toLowerCase() == link["source"]) {
+                src = item;
+              }
+            }
           }
+        } catch (error) {
+          console.log(error);
+
         }
         return src;
       });
@@ -148,26 +158,35 @@ export class VisualisationService {
       let targetNode = nodedata.filter((item: any) => {
         let tar: any;
         // console.log(item.id, link["target"]);
-
-        if (item.id.toLowerCase() == link["target"]) {
-          tar = item;
-        }
-        for (let lvl_1 of item.level_1) {
-          // console.log(lvl_1.id, link["target"]);
-          if (lvl_1.id.toLowerCase() == link["target"]) {
+        try {
+          if (item.id.toLowerCase() == link["target"]) {
             tar = item;
           }
-          for (let lvl_2 of lvl_1.level_2) {
-            // console.log(lvl_2.id, link["target"]);
-            if (lvl_2.id.toLowerCase() == link["target"]) {
+          for (let lvl_1 of item.level_1) {
+            // console.log(lvl_1.id, link["target"]);
+            if (lvl_1.id.toLowerCase() == link["target"]) {
               tar = item;
             }
+            for (let lvl_2 of lvl_1.level_2) {
+              // console.log(lvl_2.id, link["target"]);
+              if (lvl_2.id.toLowerCase() == link["target"]) {
+                tar = item;
+              }
+            }
           }
+        } catch (error) {
+          console.log(error);
+
         }
         return tar;
       });
       // console.log(targetNode[0].grid_position[1]);
-      return (sourceNode[0].grid_position[0] == targetNode[0].grid_position[0])
+      try {
+        return (sourceNode[0].grid_position[0] == targetNode[0].grid_position[0])
+      } catch (error) {
+        console.log(error);
+        return false;
+      }
     }
 
     function createLink() {
@@ -177,7 +196,7 @@ export class VisualisationService {
 
       for (let i = 0; i < linkData.length; i++) {
         // console.log(checkSameGrid(linkData[i]));
-        
+
         // console.log(nodedata.filter((item: any) => item));
         // let linkOffset = (nodedata.filter((item: any) => item.id.toLowerCase().includes(`${linkData[i]["source"].split("-")[0]}`))[0].grid_position[1])+1 * 10;
         // let linkOffset = i*5;
@@ -203,7 +222,7 @@ export class VisualisationService {
         }
 
         // console.log(graph, source, target);
-        console.log(relSrcX, relSrcWidth, relSrcY, relTarX, relTarY);
+        // console.log(relSrcX, relSrcWidth, relSrcY, relTarX, relTarY);
 
         let linkContainer = g.append('g').attr("class", "link-container")
         let link = linkContainer.append("path")
@@ -213,14 +232,18 @@ export class VisualisationService {
           .attr("d", () => {
             // console.log(relSrcX, relTarX);
             let path = ``;
-            if (checkSameGrid(linkData[i])) {
-              relTarX = relSrcX + relSrcWidth;
-              path = `M ${relSrcX + relSrcWidth + 20} ${relSrcY + 40} L${((relTarX + (relSrcX + relSrcWidth)) / 2) + 90} ${relSrcY + 40} V${relSrcY + 40} ${relTarY + 40} L${relTarX + 20} ${relTarY + 40}`;
-            } else {
-              // path = `M ${paths.sources[i].x + paths.sources[i].width} ${paths.sources[i].y + (paths.sources[i].height / 2)} L${paths.sources[i].x + paths.sources[i].width + 50 - (paths.sources[i].index * 10)} ${paths.sources[i].y + (paths.sources[i].height / 2)} V${paths.sources[i].y + (paths.sources[i].height / 2)} ${paths.targets[i].y + (paths.targets[i].height / 2)} L${paths.targets[i].x - 300} ${paths.targets[i].y + (paths.targets[i].height / 2)}`;
-              path = `M ${relSrcX + relSrcWidth + 20} ${relSrcY + 40} L${((relTarX + (relSrcX + relSrcWidth)) / 2) - 90} ${relSrcY + 40} V${relSrcY + 40} ${relTarY + 40} L${relTarX + 20} ${relTarY + 40}`;
+            try {
+              if (checkSameGrid(linkData[i])) {
+                relTarX = relSrcX + relSrcWidth;
+                path = `M ${relSrcX + relSrcWidth + 20} ${relSrcY + 40} L${((relTarX + (relSrcX + relSrcWidth)) / 2) + 90} ${relSrcY + 40} V${relSrcY + 40} ${relTarY + 40} L${relTarX + 20} ${relTarY + 40}`;
+              } else {
+                // path = `M ${paths.sources[i].x + paths.sources[i].width} ${paths.sources[i].y + (paths.sources[i].height / 2)} L${paths.sources[i].x + paths.sources[i].width + 50 - (paths.sources[i].index * 10)} ${paths.sources[i].y + (paths.sources[i].height / 2)} V${paths.sources[i].y + (paths.sources[i].height / 2)} ${paths.targets[i].y + (paths.targets[i].height / 2)} L${paths.targets[i].x - 300} ${paths.targets[i].y + (paths.targets[i].height / 2)}`;
+                path = `M ${relSrcX + relSrcWidth + 20} ${relSrcY + 40} L${((relTarX + (relSrcX + relSrcWidth)) / 2) - 90} ${relSrcY + 40} V${relSrcY + 40} ${relTarY + 40} L${relTarX + 20} ${relTarY + 40}`;
+              }
+            } catch (error) {
+              console.log(error);
             }
-            console.log(path);
+            // console.log(path);
             return path;
           })
         svg.append("svg:defs").append("svg:marker")
@@ -243,10 +266,14 @@ export class VisualisationService {
             .attr("fill", "black")
             .attr("x", () => {
               let textX = 0;
-              if (checkSameGrid(linkData[i])) {
-                textX = ((relTarX + (relSrcX + relSrcWidth)) / 2) + 55;
-              } else {
-                textX = ((relTarX + (relSrcX + relSrcWidth)) / 2) + 5;
+              try {
+                if (checkSameGrid(linkData[i])) {
+                  textX = ((relTarX + (relSrcX + relSrcWidth)) / 2) + 55;
+                } else {
+                  textX = ((relTarX + (relSrcX + relSrcWidth)) / 2) + 5;
+                }
+              } catch (error) {
+                console.log(error);
               }
               return textX;
             })
@@ -254,10 +281,14 @@ export class VisualisationService {
             .style("stroke", "none")
             .attr("y", () => {
               let textY = 0;
-              if (relTarX == (relSrcX + relSrcWidth)) {
-                textY = relTarY + 25;
-              } else {
-                textY = relTarY + 45;
+              try {
+                if (checkSameGrid(linkData[i])) {
+                  textY = relTarY + 25;
+                } else {
+                  textY = relTarY + 45;
+                }
+              } catch (error) {
+                console.log(error);
               }
               return textY;
             })
@@ -272,10 +303,15 @@ export class VisualisationService {
             .attr("fill", "black")
             .attr("x", () => {
               let textX = 0;
-              if (checkSameGrid(linkData[i])) {
-                textX = ((relTarX + (relSrcX + relSrcWidth)) / 2) + 55;
-              } else {
-                textX = ((relTarX + (relSrcX + relSrcWidth)) / 2) + 5;
+              try {
+                if (checkSameGrid(linkData[i])) {
+                  textX = ((relTarX + (relSrcX + relSrcWidth)) / 2) + 55;
+                } else {
+                  textX = ((relTarX + (relSrcX + relSrcWidth)) / 2) + 5;
+                }
+              } catch (error) {
+                console.log(error);
+
               }
               return textX;
             })
@@ -283,10 +319,14 @@ export class VisualisationService {
             .style("stroke", "none")
             .attr("y", () => {
               let textY = 0;
-              if (relTarX == (relSrcX + relSrcWidth)) {
-                textY = relTarY + 25;
-              } else {
-                textY = relTarY + 45;
+              try {
+                if (checkSameGrid(linkData[i])) {
+                  textY = relTarY + 25;
+                } else {
+                  textY = relTarY + 45;
+                }
+              } catch (error) {
+                console.log(error);
               }
               return textY;
             })
